@@ -1,8 +1,18 @@
+
+
+
 # DRIS System Report
 
 ## Overview
 
 The Disaster Response Information System (DRIS) is a web-based platform designed to streamline disaster reporting, aid requests, volunteer coordination, and authority management. The system supports three main user roles: Citizen, Volunteer, and Authority/Admin.
+
+**Project Information:**
+- **Course:** WOC7014: Framework-based Software Design and Development
+- **Author:** Mohamad Firdaus bin Mohamad Adib
+- **Author ID:** 23096377
+- **Date:** 24/06/2025
+- **Project Repository:** https://github.com/epireve/dris
 
 ---
 
@@ -168,36 +178,7 @@ This section illustrates the user navigation paths for each role (Citizen, Volun
 
 ## Navigation Diagram
 
-```mermaid
-graph TD
-    A[Homepage / Login] -->|Login as Citizen| B(Citizen Dashboard)
-    A -->|Login as Volunteer| C(Volunteer Dashboard)
-    A -->|Login as Authority| D(Authority Dashboard)
-    A -->|Register| E(Registration Page)
-
-    subgraph Citizen Flow
-        B --> B1[Report a New Disaster]
-        B --> B2[Request Aid]
-        B --> B3[View My Reports/Requests]
-        B --> B4[View Shelter Directory]
-    end
-
-    subgraph Volunteer Flow
-        C --> C1[Update Profile/Skills]
-        C --> C2[View Assigned Tasks]
-        C --> B4[View Shelter Directory]
-    end
-
-    subgraph Authority Flow
-        D --> D1[Manage Disaster Reports]
-        D --> D2[Manage Aid Requests]
-        D --> D3[Manage Shelters]
-        D --> D4[Manage Users]
-        D --> D5[Assign Volunteers to Tasks]
-    end
-
-    D1 --> D5
-```
+![Navigation Flow Diagram](../images/dris-flow-diagram.png)
 
 ## Flow Description
 
@@ -511,3 +492,57 @@ A list of aid requests available for volunteers to respond to, with filtering an
 
 ![Aid Request Take Action](../images/volunteer_03_aid_request_view_take_action.png)
 Volunteers can view detailed information about aid requests and take direct action, such as accepting assignments or updating status.
+---
+
+### Django Admin Interface
+
+The Django Admin interface provides comprehensive backend management capabilities for system administrators, accessible at `/admin`. This powerful administrative panel allows complete CRUD operations on all system entities and provides advanced filtering, search, and bulk actions for efficient data management.
+
+**Admin Homepage**
+![Admin Homepage](../images/admin_01_homepage.png)
+The Django Admin homepage serves as the central dashboard for system administrators, providing an organized overview of all manageable models including Users, Disaster Reports, Aid Requests, Shelters, Task Assignments, and Volunteer Profiles. Each section displays recent activity counts and provides direct access to list views and creation forms.
+
+**Disaster Reports Management**
+![Disaster Reports List](../images/admin_02_disaster_reports.png)
+The disaster reports administration view displays a comprehensive list of all submitted disaster reports with advanced filtering options by status, disaster type, and date range. Administrators can perform bulk actions, search by location or description, and access detailed edit views for each report.
+
+![Disaster Report Edit View](../images/admin_02_disaster_report_edit_view.png)
+The disaster report edit interface provides complete control over report details including status updates, severity adjustments, location coordinates, and administrative notes. The form includes validation and provides clear feedback for data integrity and proper disaster classification.
+
+**Aid Requests Management**
+![Aid Requests List](../images/admin_03_aid_requests.png)
+The aid requests administration panel offers comprehensive management of all citizen aid requests with filtering by aid type, status, and urgency level. Administrators can efficiently process requests, assign volunteers, and track fulfillment progress through intuitive list actions and bulk operations.
+
+![Aid Request Edit View](../images/admin_03_aid_request_edit_view.png)
+Individual aid request editing provides detailed control over request parameters, volunteer assignments, status updates, and administrative annotations. The interface supports workflow management with dropdown selections for aid types and status transitions.
+
+**Shelter Management**
+![Shelters List](../images/admin_04_shelters.png)
+The shelter management interface displays all registered shelters with comprehensive details including capacity, current occupancy, availability status, and location information. Administrators can filter by location, capacity ranges, and availability to efficiently manage disaster response resources.
+
+![Shelter Edit View](../images/admin_04_shelter_edit_view.png)
+The shelter editing form enables complete shelter profile management including name, address, contact information, capacity limits, current occupancy, and operational status. Location coordinates can be precisely configured for accurate mapping integration.
+
+**Task Assignment Management**
+![Task Assignments List](../images/admin_05_task_assignments.png)
+The task assignment administration provides oversight of all volunteer assignments with filtering by task type, status, and assigned volunteer. This interface enables efficient coordination of disaster response activities and volunteer resource allocation.
+
+![Task Assignment Edit View](../images/admin_05_task_assignment_edit_view.png)
+Individual task assignment editing allows administrators to modify task details, reassign volunteers, update progress status, and add completion notes. The form supports workflow management with clear status indicators and assignment history tracking.
+
+**User Management**
+![Users List](../images/admin_06_users.png)
+The user management interface provides comprehensive oversight of all system users with advanced filtering by role, registration date, and activity status. Administrators can perform bulk actions, search by username or email, and manage user permissions and access levels.
+
+![User Edit View 1](../images/admin_06_user_edit_1.png)
+The primary user editing form manages core user information including personal details, authentication credentials, role assignments, and account status. The interface provides secure password management and role-based permission configuration.
+
+![User Edit View 2](../images/admin_06_user_edit_2.png)
+Extended user management includes advanced permissions, group memberships, and detailed activity tracking. This comprehensive view allows fine-grained control over user capabilities and system access rights.
+
+**Volunteer Profile Management**
+![Volunteer Profiles List](../images/admin_07_volunteer_profiles.png)
+The volunteer profiles administration displays all registered volunteers with their skills, availability status, and assignment history. Administrators can filter by skill sets, location, and availability to efficiently match volunteers with appropriate disaster response tasks.
+
+![Volunteer Profile Edit View](../images/admin_07_volunteer_profile_edit_view.png)
+Individual volunteer profile editing enables comprehensive management of volunteer information including skill inventories, contact details, availability preferences, and performance tracking. The interface supports skill-based matching and volunteer capacity planning for optimal disaster response coordination.
