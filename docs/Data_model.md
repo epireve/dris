@@ -1,73 +1,52 @@
-# DRIS Data Model Design
+# DRIS Minimal Data Model (ERD)
 
-This document outlines the data model for the DRIS application. The model is designed to support the functional requirements, including user roles, disaster reporting, and resource management.
+## Entities
 
-### Entity Relationship Summary
+- **User**
+  - id (PK)
+  - username
+  - password
+  - role (Citizen, Volunteer, Authority)
 
-*   **User:** A custom User model will be used to store common data and a `role` field.
-*   **DisasterReport:** A citizen (`User`) can create many reports.
-*   **AidRequest:** A citizen (`User`) can make many aid requests. Each request can be linked to a `DisasterReport`.
-*   **Shelter:** A standalone entity managed by Authorities.
-*   **VolunteerAssignment:** A many-to-many link between a volunteer (`User`) and a `DisasterReport`, managed by an Authority.
+- **DisasterReport**
+  - id (PK)
+  - user_id (FK to User)
+  - type
+  - gps_lat
+  - gps_long
+  - severity
+  - timestamp
 
-### Tables (Models)
+- **AidRequest**
+  - id (PK)
+  - user_id (FK to User)
+  - disaster_report_id (FK to DisasterReport, optional)
+  - type (food, shelter, rescue)
+  - status
 
-#### 1. User
-*(Extends Django's AbstractUser or uses a one-to-one Profile model)*
+- **Volunteer**
+  - id (PK)
+  - user_id (FK to User)
+  - skills
+  - availability
 
-| Field Name | Data Type | Description/Constraints |
-| :--- | :--- | :--- |
-| `id` | `BigAutoField` | Primary Key |
-| `username` | `CharField` | Unique, for login |
-| `password` | `CharField` | Hashed by Django |
-| `email` | `EmailField` | Unique, for communication |
-| `full_name`| `CharField` | User's full name |
-| `role` | `CharField` | Choices: 'CITIZEN', 'VOLUNTEER', 'AUTHORITY' |
-| `skills` | `TextField` | For Volunteers only. Stores comma-separated skills. |
-| `is_available`| `BooleanField`| For Volunteers only. Default: False. |
+- **Shelter**
+  - id (PK)
+  - location
+  - capacity
+  - availability
 
-#### 2. DisasterReport
+## Relationships
 
-| Field Name | Data Type | Description/Constraints |
-| :--- | :--- | :--- |
-| `id` | `BigAutoField` | Primary Key |
-| `reporter` | `ForeignKey(User)` | The citizen who reported it. |
-| `disaster_type`| `CharField` | Choices: 'Flood', 'Landslide', 'Haze', 'Other' |
-| `latitude` | `DecimalField` | GPS coordinate |
-| `longitude`| `DecimalField` | GPS coordinate |
-| `severity` | `CharField` | Choices: 'Low', 'Medium', 'High', 'Critical' |
-| `timestamp` | `DateTimeField` | Auto-generated on creation. |
-| `status` | `CharField` | Choices: 'New', 'In Progress', 'Resolved' |
+- User (1) --- (M) DisasterReport
+- User (1) --- (M) AidRequest
+- User (1) --- (1) Volunteer
+- DisasterReport (1) --- (M) AidRequest
+- Shelter is standalone, referenced in AidRequest if needed
 
-#### 3. AidRequest
+## Simple ERD (text)
 
-| Field Name | Data Type | Description/Constraints |
-| :--- | :--- | :--- |
-| `id` | `BigAutoField` | Primary Key |
-| `requester`| `ForeignKey(User)` | The citizen requesting aid. |
-| `aid_type` | `CharField` | Choices: 'Food', 'Shelter', 'Rescue', 'Medical' |
-| `description`| `TextField` | Details of the request. |
-| `status` | `CharField` | Choices: 'Pending', 'Fulfilled' |
-| `timestamp`| `DateTimeField` | Auto-generated on creation. |
-
-#### 4. Shelter
-
-| Field Name | Data Type | Description/Constraints |
-| :--- | :--- | :--- |
-| `id` | `BigAutoField` | Primary Key |
-| `name` | `CharField` | Name of the shelter. |
-| `location` | `CharField` | Address or description of location. |
-| `capacity` | `IntegerField` | Maximum number of people. |
-| `availability`| `IntegerField` | Current number of available spots. |
-
-#### 5. VolunteerAssignment
-
-| Field Name | Data Type | Description/Constraints |
-| :--- | :--- | :--- |
-| `id` | `BigAutoField` | Primary Key |
-| `volunteer`| `ForeignKey(User)` | The assigned volunteer. `limit_choices_to={'role': 'VOLUNTEER'}` |
-| `report` | `ForeignKey(DisasterReport)` | The disaster report this task is related to. |
-| `assigned_by`| `ForeignKey(User)` | The authority who made the assignment. `limit_choices_to={'role': 'AUTHORITY'}` |
-| `task_description`| `TextField` | Specific instructions for the volunteer. |
-| `status` | `CharField` | Choices: 'Assigned', 'Completed' |
-| `timestamp`| `DateTimeField` | Auto-generated on creation. |
+User --< DisasterReport
+User --< AidRequest
+User -- Volunteer
+DisasterReport --< AidRequest
