@@ -1,49 +1,87 @@
 # DRIS (Disaster Response Information System)
 
-A minimal Django-based system for disaster response coordination.
+## Overview
 
-## Setup
+DRIS is a Django-based web application for disaster reporting, aid coordination, volunteer management, and shelter directory, supporting real-time updates via Django Channels.
 
-1. Create and activate virtual environment:
+---
+
+## Setup & Installation
+
+1. **Clone the repository**
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Apply migrations**
+   ```bash
+   python manage.py migrate
+   ```
+4. **Seed initial data (optional)**
+   ```bash
+   python manage.py populate_data
+   ```
+5. **Create a superuser (optional)**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+---
+
+## Running the Server
+
+### For Real-Time Features (ASGI/Channels)
+
+> **Important:** To enable real-time updates (WebSockets), you must run the server with Daphne (ASGI server):
+
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+daphne DRIS_Project.asgi:application
 ```
 
-2. Install dependencies:
-```bash
-pip install django
-```
+- By default, this runs on port 8000. To specify a port:
+  ```bash
+  daphne -p 8000 DRIS_Project.asgi:application
+  ```
 
-3. Configure the project:
-- Ensure core app is added to INSTALLED_APPS in settings.py
-- Set AUTH_USER_MODEL = 'core.User' in settings.py
-- Run migrations:
-```bash
-python manage.py makemigrations
-python manage.py migrate
-```
+### For Standard Django (No Real-Time)
 
-4. Run development server:
+If you do not need real-time features, you can use the standard Django runserver:
+
 ```bash
 python manage.py runserver
 ```
 
+---
+
 ## Features
 
-1. Custom User Model with role-based access (Citizen, Volunteer, Authority)
-2. Disaster Report management
-3. Aid Request handling
-4. Shelter management
+- Disaster reporting and management
+- Aid request and assignment
+- Volunteer registration and coordination
+- Shelter directory with filtering and management
+- Real-time updates for disaster reports and shelter availability (via WebSockets)
+- Role-based navigation and permissions
+- Responsive, accessible Bootstrap UI
 
-## Project Structure
+---
 
-- `core/` - Main application
-  - `models.py` - Database models
-  - `forms.py` - Forms for user registration
-  - `views.py` - Views for authentication
-  - `templates/` - HTML templates
+## Real-Time Updates
+
+- WebSocket endpoint: `/ws/updates/`
+- Real-time updates are broadcast to all connected clients when disaster reports or shelters are updated.
+
+---
 
 ## Documentation
 
-- Data Model: [docs/Data_model.md](docs/Data_model.md)
+- UI/UX Design: `docs/UI_UX_design.md`
+- Navigation Flow: `docs/Navigation_Flow.md`
+- Data Model: `docs/Data_model.md`
+
+---
+
+## Credits
+
+By Firdaus Adib (23096377)
+
+DRIS 2025.

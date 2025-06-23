@@ -6,4 +6,4 @@ class CoreConfig(AppConfig):
     name = "core"
 
     def ready(self):
-        import core.signals  # Register signals when app is ready
+        import core.signals
