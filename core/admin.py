@@ -7,16 +7,9 @@ from .models import (
     Shelter,
     VolunteerProfile,
     TaskAssignment,
+    User,
 )
 from django.utils import timezone
-from .models import (
-    User,
-    DisasterReport,
-    AidRequest,
-    Shelter,
-    VolunteerProfile,
-    TaskAssignment,
-)
 
 
 class CustomUserAdmin(UserAdmin):
@@ -53,31 +46,114 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(DisasterReport)
 class DisasterReportAdmin(admin.ModelAdmin):
-    list_display = ("disaster_type", "severity", "status", "reporter", "timestamp")
+    list_display = (
+        "id",
+        "disaster_type",
+        "severity",
+        "status",
+        "reporter",
+        "timestamp",
+    )
     list_filter = ("disaster_type", "severity", "status", "timestamp")
     search_fields = ("description", "reporter__username")
     date_hierarchy = "timestamp"
+    readonly_fields = ("timestamp", "last_updated")
+    ordering = ("-timestamp",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "disaster_type",
+                    "severity",
+                    "status",
+                    "description",
+                    "latitude",
+                    "longitude",
+                    "reporter",
+                    "timestamp",
+                    "last_updated",
+                )
+            },
+        ),
+    )
 
 
 @admin.register(AidRequest)
 class AidRequestAdmin(admin.ModelAdmin):
-    list_display = ("aid_type", "priority", "status", "requester", "timestamp")
+    list_display = (
+        "id",
+        "aid_type",
+        "priority",
+        "status",
+        "requester",
+        "timestamp",
+        "disaster_report",
+        "assigned_to",
+    )
     list_filter = ("aid_type", "priority", "status", "timestamp")
     search_fields = ("description", "requester__username", "location_details")
     date_hierarchy = "timestamp"
     raw_id_fields = ("disaster_report", "assigned_to")
+    readonly_fields = ("timestamp", "last_updated")
+    ordering = ("-timestamp",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "aid_type",
+                    "priority",
+                    "status",
+                    "description",
+                    "quantity",
+                    "location_details",
+                    "disaster_report",
+                    "requester",
+                    "assigned_to",
+                    "timestamp",
+                    "last_updated",
+                )
+            },
+        ),
+    )
 
 
 @admin.register(Shelter)
 class ShelterAdmin(admin.ModelAdmin):
-    list_display = ("name", "location", "capacity", "availability", "is_active")
-    list_filter = ("is_active",)
-    search_fields = ("name", "location")
+    list_display = (
+        "id",
+        "name",
+        "location",
+        "capacity",
+        "availability",
+        "is_active",
+        "contact_info",
+    )
+    list_filter = ("is_active", "location")
+    search_fields = ("name", "location", "contact_info")
+    ordering = ("name",)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "name",
+                    "location",
+                    "capacity",
+                    "availability",
+                    "is_active",
+                    "contact_info",
+                )
+            },
+        ),
+    )
 
 
 @admin.register(VolunteerProfile)
 class VolunteerProfileAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "user",
         "availability",
         "verification_status",
@@ -93,7 +169,6 @@ class VolunteerProfileAdmin(admin.ModelAdmin):
     search_fields = ("user__username", "user__email", "contact_number", "notes")
     raw_id_fields = ("user", "verified_by")
     readonly_fields = ("verification_date",)
-
     fieldsets = (
         (None, {"fields": ("user", "is_active", "notes")}),
         (
