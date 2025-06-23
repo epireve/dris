@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 
 class User(AbstractUser):
@@ -213,3 +214,37 @@ class VolunteerProfile(models.Model):
         if location in self.preferred_locations:
             self.preferred_locations.remove(location)
             self.save()
+
+
+class TaskAssignment(models.Model):
+    STATUS_CHOICES = [
+        ("ASSIGNED", "Assigned"),
+        ("IN_PROGRESS", "In Progress"),
+        ("COMPLETED", "Completed"),
+        ("CANCELLED", "Cancelled"),
+    ]
+    authority = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="assigned_tasks",
+        limit_choices_to={"role": "AUTHORITY"},
+    )
+    volunteer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="volunteer_tasks",
+        limit_choices_to={"role": "VOLUNTEER"},
+    )
+    aid_request = models.ForeignKey(
+        "AidRequest", on_delete=models.CASCADE, related_name="task_assignments"
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="ASSIGNED")
+    notes = models.TextField(blank=True)
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("volunteer", "aid_request")
+
+    def __str__(self):
+        return f"Task: {self.aid_request} -> {self.volunteer} (by {self.authority})"
