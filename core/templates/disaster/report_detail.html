@@ -1,123 +1,158 @@
 {% extends "core/home.html" %}
 
+{% block title %}Disaster Report Detail{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Report Details</li>
-                </ol>
-            </nav>
-
-            <div class="card">
-                <div class="card-header {% if report.severity == 'CRITICAL' %}bg-danger text-white
-                                      {% elif report.severity == 'HIGH' %}bg-warning
-                                      {% elif report.severity == 'MEDIUM' %}bg-info text-white
-                                      {% else %}bg-success text-white{% endif %}">
-                    <h3 class="card-title mb-0">{{ report.get_disaster_type_display }}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h5>Status</h5>
-                            <p class="badge {% if report.status == 'NEW' %}bg-primary
-                                          {% elif report.status == 'VERIFIED' %}bg-success
-                                          {% elif report.status == 'IN_PROGRESS' %}bg-warning
-                                          {% else %}bg-secondary{% endif %}">
-                                {{ report.get_status_display }}
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <h5>Severity</h5>
-                            <p class="badge {% if report.severity == 'CRITICAL' %}bg-danger
-                                          {% elif report.severity == 'HIGH' %}bg-warning
-                                          {% elif report.severity == 'MEDIUM' %}bg-info
-                                          {% else %}bg-success{% endif %}">
-                                {{ report.get_severity_display }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <h5>Description</h5>
-                        <p>{{ report.description }}</p>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h5>Location</h5>
-                            <p>Latitude: {{ report.latitude }}<br>
-                               Longitude: {{ report.longitude }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <h5>Reported By</h5>
-                            <p>{{ report.reporter.username }}<br>
-                               {{ report.timestamp|date:"F j, Y, P" }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Associated Aid Requests Section -->
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5>Associated Aid Requests</h5>
-                            {% if user.role == 'CITIZEN' %}
-                                <a href="{% url 'submit_aid_request' %}?disaster_report={{ report.id }}" 
-                                   class="btn btn-primary btn-sm">
-                                    <i class="bi bi-plus-circle"></i> Submit Aid Request
-                                </a>
-                            {% endif %}
-                        </div>
-                        
-                        {% if report.aid_requests.exists %}
-                            <div class="list-group mt-3">
-                                {% for request in report.aid_requests.all %}
-                                    <a href="{% url 'aid_request_detail' request.pk %}" 
-                                       class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">{{ request.get_aid_type_display }}</h6>
-                                            <small class="text-muted">{{ request.timestamp|date:"F j, Y" }}</small>
-                                        </div>
-                                        <p class="mb-1">{{ request.description|truncatewords:20 }}</p>
-                                        <small class="text-muted">
-                                            Status: {{ request.get_status_display }} | 
-                                            Priority: {{ request.get_priority_display }}
-                                        </small>
-                                    </a>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="alert alert-info mt-3">
-                                No aid requests associated with this disaster report yet.
-                                {% if user.role == 'CITIZEN' %}
-                                    <a href="{% url 'submit_aid_request' %}?disaster_report={{ report.id }}" 
-                                       class="alert-link">Submit one now?</a>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    {% if user.role == 'AUTHORITY' %}
-                    <div class="mb-3">
-                        <h5>Administrative Actions</h5>
-                        <form method="post">
-                            {% csrf_token %}
-                            <select name="status" class="form-select mb-2">
-                                {% for status in report.STATUS_CHOICES %}
-                                <option value="{{ status.0 }}" {% if report.status == status.0 %}selected{% endif %}>
-                                    {{ status.1 }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                            <button type="submit" class="btn btn-primary">Update Status</button>
-                        </form>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Disaster Reports</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Report #{{ report.pk }}</li>
+        </ol>
+    </nav>
+    
+    <div class="mb-4 card">
+        {% comment %}
+        Severity color mapping:
+        CRITICAL: bg-danger
+        HIGH: bg-warning
+        MEDIUM: bg-primary
+        LOW: bg-success
+        {% endcomment %}
+        <div class="card-header 
+            {% if report.severity == "CRITICAL" %}bg-danger text-white
+            {% elif report.severity == "HIGH" %}bg-warning text-dark
+            {% elif report.severity == "MEDIUM" %}bg-primary text-white
+            {% else %}bg-success text-white
+            {% endif %}
+        ">
+            <strong>{{ report.get_disaster_type_display }}</strong>
+            <span class="badge bg-info ms-2">{{ report.get_status_display }}</span>
+            <span class="badge 
+                {% if report.severity == 'CRITICAL' %}bg-danger
+                {% elif report.severity == 'HIGH' %}bg-warning text-dark
+                {% elif report.severity == 'MEDIUM' %}bg-primary
+                {% else %}bg-success
+                {% endif %}
+                ms-2">{{ report.get_severity_display }}</span>
+        </div>
+        <div class="card-body">
+            <p><strong>Description:</strong> {{ report.description }}</p>
+            <p><strong>Location:</strong> {{ report.latitude }}, {{ report.longitude }}</p>
+            <div id="map" style="height: 350px; width: 100%; margin-bottom: 1rem;"></div>
+            <p><strong>Reported by:</strong> {{ report.reporter.get_full_name }} ({{ report.reporter.username }})</p>
+            <p><strong>Timestamp:</strong> {{ report.timestamp|date:"Y-m-d H:i" }}</p>
         </div>
     </div>
+
+    {# Associated Aid Requests #}
+    <div class="mb-4 card">
+        <div class="card-header bg-light">
+            <strong>Associated Aid Requests</strong>
+        </div>
+        <div class="card-body">
+            {% if associated_aid_requests %}
+                <div class="table-responsive">
+                    <table class="table align-middle table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Assigned To</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for aid in associated_aid_requests %}
+                                <tr>
+                                    <td>{{ aid.get_aid_type_display }}</td>
+                                    <td>{{ aid.description }}</td>
+                                    <td>{{ aid.quantity }}</td>
+                                    <td>{{ aid.get_priority_display }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ aid.get_status_display }}</span>
+                                    </td>
+                                    <td>
+                                        {% if aid.assigned_to %}
+                                            {{ aid.assigned_to.get_full_name }}
+                                        {% else %}
+                                            <span class="text-muted">Unassigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'aid_request_detail' aid.pk %}" class="btn btn-sm btn-outline-primary">
+                                            Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center alert alert-warning" role="alert">
+                    No aid requests associated with this report.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Administrative Actions #}
+    {% if user.is_authenticated %}
+        {% if user.is_superuser or user.is_staff or user.role == "AUTHORITY" %}
+        <div class="mb-4 card">
+            <div class="text-white card-header bg-secondary">
+                <strong>Administrative Actions</strong>
+            </div>
+            <div class="card-body">
+                <form method="post" action="" class="row g-2 align-items-end">
+                    {% csrf_token %}
+                    <div class="col">
+                        <label for="status" class="mb-0 form-label me-2"><strong>Update Status</strong></label>
+                        <select name="status" id="status" class="form-select w-100">
+                            {% for value, label in report.STATUS_CHOICES %}
+                                <option value="{{ value }}" {% if report.status == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+                <a href="{% url 'aid_request_list' %}?disaster_report={{ report.pk }}" class="mt-3 btn btn-outline-primary">
+                    View Related Aid Requests
+                </a>
+                <!-- Add more admin actions as needed -->
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Leaflet.js for OpenStreetMap -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var lat = parseFloat("{{ report.latitude|floatformat:'6' }}");
+    var lng = parseFloat("{{ report.longitude|floatformat:'6' }}");
+    var map = L.map('map').setView([lat, lng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup("{{ report.get_disaster_type_display|escapejs }}<br>{{ report.latitude }}, {{ report.longitude }}")
+        .openPopup();
+});
+</script>
 {% endblock %}

@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
 from django.views.generic import TemplateView, ListView, CreateView
 from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -94,9 +95,23 @@ class DisasterReportListView(ListView):
 @login_required
 def disaster_report_detail(request, pk):
     report = get_object_or_404(DisasterReport, pk=pk)
-    if request.user.role == "CITIZEN" and report.reporter != request.user:
-        return redirect("home")
-    return render(request, "disaster/report_detail.html", {"report": report})
+    # Only show aid requests that are linked to this disaster report
+    associated_aid_requests = AidRequest.objects.filter(disaster_report=report)
+    if request.method == "POST" and (
+        request.user.is_superuser
+        or request.user.is_staff
+        or getattr(request.user, "role", None) == "AUTHORITY"
+    ):
+        new_status = request.POST.get("status")
+        if new_status in dict(DisasterReport.STATUS_CHOICES):
+            report.status = new_status
+            report.save()
+        return redirect("disaster_report_detail", pk=report.pk)
+    return render(
+        request,
+        "disaster/report_detail.html",
+        {"report": report, "associated_aid_requests": associated_aid_requests},
+    )
 
 
 @method_decorator(citizen_required, name="dispatch")
