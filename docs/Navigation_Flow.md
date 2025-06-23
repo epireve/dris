@@ -62,3 +62,127 @@ graph TD
         *   **Manage Shelters:** Add, edit, or remove shelters and update their availability.
         *   **Manage Users:** View and manage all user accounts.
         *   **Assign Volunteers:** From the disaster report view, an Authority can assign an available volunteer to a specific task.
+
+
+## User Roles
+
+- **Citizen**
+- **Volunteer**
+- **Authority/Admin**
+
+---
+
+## Main Navigation Structure
+
+```
+[Home] [Disaster Reports] [Aid Requests] [Shelters] [Analytics] [Login/Register or Profile/Logout]
+```
+- Navigation links are shown/hidden based on user role and authentication status.
+
+---
+
+## Key Navigation Flows
+
+### 1. Citizen
+
+**Typical Journey:**
+1. Home → Report Disaster
+2. Home → Request Aid
+3. Home → My Reports / My Requests
+4. Logout
+
+**Navigation:**
+- [Home] → [Report Disaster] → [Submit Disaster Report]
+- [Home] → [Request Aid] → [Submit Aid Request]
+- [Home] → [My Reports] → [Disaster Report List/Detail]
+- [Home] → [My Requests] → [Aid Request List/Detail]
+
+---
+
+### 2. Volunteer
+
+**Typical Journey:**
+1. Home → View Aid Requests
+2. Home → View Disaster Reports
+3. Home → Register/Update Volunteer Profile
+4. Logout
+
+**Navigation:**
+- [Home] → [Aid Requests] → [Aid Request List/Detail]
+- [Home] → [Disaster Reports] → [Disaster Report List/Detail]
+- [Home] → [Volunteer Profile] → [Register/Update Profile]
+
+---
+
+### 3. Authority/Admin
+
+**Typical Journey:**
+1. Home → Manage Reports
+2. Home → Manage Aid
+3. Home → Manage Shelters
+4. Home → Analytics Dashboard
+5. Logout
+
+**Navigation:**
+- [Home] → [Manage Reports] → [Disaster Report List/Detail/Assignment]
+- [Home] → [Manage Aid] → [Aid Request List/Detail/Assignment]
+- [Home] → [Manage Shelters] → [Shelter Directory/Add/Edit]
+- [Home] → [Analytics] → [Analytics Dashboard]
+
+---
+
+## Navigation Diagram (Text)
+
+```
++-------------------+
+|      Home         |
++-------------------+
+   |         |         |         |
+   v         v         v         v
+[Disaster][Aid Req][Shelters][Analytics]
+  |           |         |         |
+  v           v         v         v
+[Detail]   [Detail]   [Add/Edit][Charts]
+```
+
+---
+
+## Page Access Matrix
+
+| Page                | Citizen | Volunteer | Authority/Admin |
+|---------------------|:-------:|:---------:|:--------------:|
+| Home                |   ✔     |    ✔      |      ✔         |
+| Disaster Reports    |   ✔     |    ✔      |      ✔         |
+| Aid Requests        |   ✔     |    ✔      |      ✔         |
+| Shelters            |   ✔     |    ✔      |      ✔         |
+| Analytics           |         |           |      ✔         |
+| Volunteer Register  |         |    ✔      |                |
+| Manage Shelters     |         |           |      ✔         |
+| Assign Tasks        |         |           |      ✔         |
+
+---
+
+## User Journey Examples
+
+### Citizen
+
+- **Report Disaster:** Home → Report Disaster → Fill Form → Submit → See My Reports
+- **Request Aid:** Home → Request Aid → Fill Form → Submit → See My Requests
+
+### Volunteer
+
+- **Respond to Aid:** Home → Aid Requests → View Details → Respond/Update Status
+- **Register as Volunteer:** Home → Volunteer Profile → Register/Update
+
+### Authority/Admin
+
+- **Assign Task:** Home → Manage Aid → Aid Request Detail → Assign Volunteer
+- **View Analytics:** Home → Analytics → Dashboard
+
+---
+
+## Notes
+
+- All navigation is mobile-friendly and accessible.
+- Unauthorized users are redirected to login or home as appropriate.
+- Navigation adapts dynamically to user role and authentication status.
