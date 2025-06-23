@@ -23,4 +23,6 @@ urlpatterns = [
     ),
     path("aid/requests/", views.AidRequestListView.as_view(), name="aid_request_list"),
     path("aid/request/<int:pk>/", views.aid_request_detail, name="aid_request_detail"),
+    # Volunteer Registration
+    path("volunteer/register/", views.volunteer_register, name="volunteer_register"),
 ]
