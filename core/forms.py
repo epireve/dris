@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, DisasterReport, AidRequest
+from .models import User, DisasterReport, AidRequest, VolunteerProfile
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -139,3 +139,40 @@ class AidRequestForm(forms.ModelForm):
             )
 
         return cleaned_data
+
+
+# --- Volunteer Registration Form ---
+class VolunteerRegistrationForm(forms.ModelForm):
+    skills = forms.MultipleChoiceField(
+        choices=VolunteerProfile.SKILL_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+        help_text="Select your skills",
+    )
+    preferred_locations = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "e.g. Selangor, Pahang"}),
+        required=False,
+        help_text="Comma-separated list of preferred volunteering locations",
+    )
+
+    class Meta:
+        model = VolunteerProfile
+        fields = [
+            "skills",
+            "availability",
+            "preferred_locations",
+            "contact_number",
+            "emergency_contact",
+            "notes",
+        ]
+        widgets = {
+            "availability": forms.Select(attrs={"class": "form-control"}),
+            "contact_number": forms.TextInput(attrs={"class": "form-control"}),
+            "emergency_contact": forms.TextInput(attrs={"class": "form-control"}),
+            "notes": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
+        }
+
+    def clean_preferred_locations(self):
+        data = self.cleaned_data["preferred_locations"]
+        # Convert comma-separated string to list
+        return [loc.strip() for loc in data.split(",") if loc.strip()]
