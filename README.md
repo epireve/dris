@@ -28,6 +28,26 @@ DRIS is a Django-based web application for disaster reporting, aid coordination,
 
 ---
 
+## Credentials (Sample Data)
+
+### Admin
+- **Username:** `epireve`
+- **Password:** `PassWord123!`
+
+### Authorities
+- **Username:** `authority_selangor` / `authority_pahang` / `authority_terengganu`
+- **Password:** `password123`
+
+### Volunteers
+- **Username:** `volunteer_amir` / `volunteer_lisa` / `volunteer_raj` / `volunteer_mary` / `volunteer_hassan`
+- **Password:** `password123`
+
+### Citizens
+- **Username:** `ahmad_shah`, `siti_aminah`, `lee_wei_ming`, `priya_devi`, `robert_tan`, `fatimah_ali`, `chen_mei_ling`, `rajesh_kumar`, `nurul_huda`, `david_wong`
+- **Password:** `password123`
+
+---
+
 ## Running the Server
 
 ### For Real-Time Features (ASGI/Channels)
