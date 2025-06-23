@@ -76,7 +76,7 @@
         "dependencies": [
           1
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -102,7 +102,7 @@
             "description": "Translate the ERD into Django model classes, specifying fields, relationships, and constraints for each entity.",
             "dependencies": [],
             "details": "Implement Django models for each entity in a models.py file. Use appropriate field types, define relationships (ForeignKey, ManyToMany, OneToOne), and set constraints (unique, nullability). Include model docstrings to describe each model’s purpose and fields.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run Django's makemigrations and migrate commands to ensure models are valid and database tables are created as expected."
           },
           {
@@ -111,7 +111,7 @@
             "description": "Create and populate Data_Model.md in the /docs directory, detailing the schema, entities, attributes, and relationships.",
             "dependencies": [],
             "details": "Write clear documentation for each model, including field descriptions, data types, and relationships. Include the ERD diagram and explanations of key constraints and business rules. Ensure the document is organized and accessible for future reference.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Review the documentation for completeness and clarity. Have a team member unfamiliar with the schema validate that the document is understandable."
           },
           {
@@ -120,7 +120,7 @@
             "description": "Conduct a peer review of the data model and documentation, making adjustments based on feedback and ensuring alignment with PRD requirements.",
             "dependencies": [],
             "details": "Share the Data_Model.md and Django models with relevant stakeholders for feedback. Address any issues related to normalization, naming conventions, or missing requirements. Update models and documentation as needed to finalize the data model.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Confirm that all PRD requirements are met, and that the schema is normalized, consistent, and ready for implementation."
           }
         ]
@@ -671,7 +671,7 @@
     ],
     "metadata": {
       "created": "2025-06-23T01:54:54.967Z",
-      "updated": "2025-06-23T02:10:06.457Z",
+      "updated": "2025-06-23T02:19:13.681Z",
       "description": "Tasks for master context"
     }
   }
