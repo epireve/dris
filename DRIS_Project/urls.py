@@ -7,7 +7,7 @@ urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
     path("admin/", admin.site.urls),
     path("register/", views.register, name="register"),
-    path("login/", views.UserLoginView.as_view(), name="login"),
+    path("login/", views.CustomLoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
     # Disaster Report URLs
     path(
