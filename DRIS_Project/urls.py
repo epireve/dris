@@ -27,4 +27,6 @@ urlpatterns = [
     path("volunteer/register/", views.volunteer_register, name="volunteer_register"),
     # Authority Analytics
     path("authority/analytics/", views.authority_analytics, name="authority_analytics"),
+    # Public Shelter Directory
+    path("shelters/", views.shelter_directory, name="shelter_directory"),
 ]

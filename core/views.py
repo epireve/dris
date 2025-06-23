@@ -14,6 +14,7 @@ from .forms import (
     VolunteerRegistrationForm,
 )
 from .models import DisasterReport, AidRequest, VolunteerProfile, User, TaskAssignment
+from .models import Shelter
 from .decorators import citizen_required, volunteer_required, authority_required
 
 
@@ -282,3 +283,8 @@ def authority_analytics(request):
         "recent_assignments": recent_assignments,
     }
     return render(request, "authority/analytics.html", context)
+
+
+def shelter_directory(request):
+    shelters = Shelter.objects.filter(is_active=True).order_by("location", "name")
+    return render(request, "shelter/directory.html", {"shelters": shelters})
