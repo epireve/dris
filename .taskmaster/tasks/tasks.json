@@ -154,7 +154,7 @@
               1
             ],
             "details": "Create separate registration forms or a unified form with role selection. In the registration view, handle form validation and save the user with the selected role. Ensure password hashing and user creation follow Django best practices.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test registration for each role, checking that users are created with the correct role and that invalid submissions are handled gracefully."
           },
           {
@@ -165,7 +165,7 @@
               2
             ],
             "details": "Use Django's built-in authentication views or create custom ones as needed. Ensure session management is enabled and users are authenticated based on email/username and password. Redirect users appropriately after login.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test login with valid and invalid credentials for each role, and verify session creation and user redirection."
           },
           {
@@ -176,7 +176,7 @@
               3
             ],
             "details": "Create custom decorators or mixins to check user roles before granting access to specific views. Apply these checks to views that require role-based restrictions. Document which roles have access to which resources.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "Write tests to ensure users with different roles can only access permitted views and are denied access otherwise."
           },
           {
@@ -671,7 +671,7 @@
     ],
     "metadata": {
       "created": "2025-06-23T01:54:54.967Z",
-      "updated": "2025-06-23T02:20:15.554Z",
+      "updated": "2025-06-23T02:36:20.169Z",
       "description": "Tasks for master context"
     }
   }

@@ -25,6 +25,13 @@
             <a class="navbar-brand" href="{% url 'home' %}">DRIS</a>
             <div class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
+                    {% if user.role == 'CITIZEN' %}
+                        <a class="nav-link" href="{% url 'submit_report' %}">Submit Report</a>
+                    {% elif user.role == 'VOLUNTEER' %}
+                        <a class="nav-link" href="{% url 'volunteer_dashboard' %}">Dashboard</a>
+                    {% elif user.role == 'AUTHORITY' %}
+                        <a class="nav-link" href="{% url 'manage_reports' %}">Manage Reports</a>
+                    {% endif %}
                     <span class="nav-link">{{ user.username }} ({{ user.role }})</span>
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                 {% else %}
@@ -35,61 +42,39 @@
         </div>
     </nav>
 
-    {% if user.is_authenticated %}
-        <div class="hero text-center">
-            <h1 class="display-4">Welcome to DRIS</h1>
-            <p class="lead">Disaster Response Information System</p>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Report Disaster</h5>
-                            <p class="card-text">Submit a new disaster report in your area.</p>
-                            <a href="#" class="btn btn-primary">Report Now</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Request Aid</h5>
-                            <p class="card-text">Request assistance or resources.</p>
-                            <a href="#" class="btn btn-success">Request Aid</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">View Shelters</h5>
-                            <p class="card-text">Find available shelter locations.</p>
-                            <a href="#" class="btn btn-info">Find Shelter</a>
+    <div class="container">
+        {% if user.is_authenticated %}
+            <div class="hero text-center">
+                <h1 class="display-4">Welcome to DRIS</h1>
+                <p class="lead">
+                    {% if user.role == 'CITIZEN' %}
+                        Report disasters and request assistance
+                    {% elif user.role == 'VOLUNTEER' %}
+                        Help those in need during disasters
+                    {% elif user.role == 'AUTHORITY' %}
+                        Manage disaster reports and coordinate response
+                    {% endif %}
+                </p>
+            </div>
+        {% else %}
+            <div class="text-center mt-5">
+                <h1 class="display-4">Welcome to DRIS</h1>
+                <p class="lead mb-4">Disaster Response Information System</p>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Get Started</h5>
+                                <p class="card-text">Please login or register to access the system.</p>
+                                <a href="{% url 'login' %}" class="btn btn-primary me-2">Login</a>
+                                <a href="{% url 'register' %}" class="btn btn-success">Register</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    {% else %}
-        <div class="container text-center mt-5">
-            <h1 class="display-4">Welcome to DRIS</h1>
-            <p class="lead mb-4">Disaster Response Information System</p>
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Get Started</h5>
-                            <p class="card-text">Please login or register to access the system.</p>
-                            <a href="{% url 'login' %}" class="btn btn-primary me-2">Login</a>
-                            <a href="{% url 'register' %}" class="btn btn-success">Register</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
