@@ -1,48 +1,104 @@
 {% extends "core/home.html" %}
 
+{% block title %}Disaster Reports{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
-    <h2 class="mb-4">Disaster Reports</h2>
-    
-    {% if request.user.role == 'CITIZEN' %}
-    <div class="mb-4">
-        <a href="{% url 'submit_report' %}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Submit New Report
-        </a>
-    </div>
-    {% endif %}
-
-    {% if reports %}
-        <div class="row">
-            {% for report in reports %}
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header {% if report.severity == 'CRITICAL' %}bg-danger text-white
-                                              {% elif report.severity == 'HIGH' %}bg-warning
-                                              {% elif report.severity == 'MEDIUM' %}bg-info text-white
-                                              {% else %}bg-success text-white{% endif %}">
-                            {{ report.get_disaster_type_display }}
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Severity: {{ report.get_severity_display }}</h5>
-                            <p class="card-text">{{ report.description|truncatewords:30 }}</p>
-                            <ul class="list-unstyled">
-                                <li><small class="text-muted">Status: {{ report.get_status_display }}</small></li>
-                                <li><small class="text-muted">Reported by: {{ report.reporter.username }}</small></li>
-                                <li><small class="text-muted">Date: {{ report.timestamp|date:"F j, Y, P" }}</small></li>
-                            </ul>
-                            <a href="{% url 'disaster_report_detail' report.pk %}" class="btn btn-outline-primary btn-sm">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
+    <h2 class="mb-4 text-center">Disaster Reports</h2>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form method="get" class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Disaster Type</label>
+                    <select name="type" id="type" class="form-select">
+                        <option value="">All Types</option>
+                        {% for value, label in reports.model.DISASTER_TYPES %}
+                            <option value="{{ value }}" {% if request.GET.type == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-            {% endfor %}
+                <div class="col-md-3">
+                    <label for="severity" class="form-label">Severity</label>
+                    <select name="severity" id="severity" class="form-select">
+                        <option value="">All Severities</option>
+                        {% for value, label in reports.model.SEVERITY_CHOICES %}
+                            <option value="{{ value }}" {% if request.GET.severity == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" name="location" id="location" class="form-control" value="{{ request.GET.location }}">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                </div>
+            </form>
         </div>
-    {% else %}
-        <div class="alert alert-info">
-            No disaster reports found.
+    </div>
+    <div class="row">
+        <div class="col-12">
+            {% if reports %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                                <th>Timestamp</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in reports %}
+                                <tr>
+                                    <td>{{ report.get_disaster_type_display }}</td>
+                                    <td>{{ report.latitude }}, {{ report.longitude }}</td>
+                                    <td>{{ report.get_severity_display }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ report.get_status_display }}</span>
+                                    </td>
+                                    <td>{{ report.timestamp|date:"Y-m-d H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'disaster_report_detail' report.pk %}" class="btn btn-sm btn-outline-primary">
+                                            Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-warning text-center" role="alert">
+                    No disaster reports found.
+                </div>
+            {% endif %}
         </div>
-    {% endif %}
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const ws_path = ws_scheme + '://' + window.location.host + "/ws/updates/";
+    const socket = new WebSocket(ws_path);
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        if (data.model === "disaster_report") {
+            location.reload();
+        }
+    };
+    socket.onclose = function() {
+        console.warn("WebSocket closed. Real-time updates unavailable.");
+    };
+})();
+</script>
 {% endblock %}

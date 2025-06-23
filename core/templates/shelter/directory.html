@@ -91,3 +91,23 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const ws_path = ws_scheme + '://' + window.location.host + "/ws/updates/";
+    const socket = new WebSocket(ws_path);
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        if (data.model === "shelter") {
+            location.reload();
+        }
+    };
+    socket.onclose = function() {
+        console.warn("WebSocket closed. Real-time updates unavailable.");
+    };
+})();
+</script>
+{% endblock %}
