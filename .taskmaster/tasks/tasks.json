@@ -135,7 +135,7 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -143,7 +143,7 @@
             "description": "Create a custom user model that extends Django's AbstractUser or AbstractBaseUser, adding a 'role' field to distinguish between Citizens, Volunteers, and Authorities.",
             "dependencies": [],
             "details": "Define the custom user model in your app's models.py, including a CharField or ChoiceField for the role. Update settings.py to set AUTH_USER_MODEL to your new model. Implement a custom user manager if using AbstractBaseUser. Run migrations to apply the new model.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Write unit tests to verify user creation with different roles and ensure the role field is correctly set and validated."
           },
           {
@@ -671,7 +671,7 @@
     ],
     "metadata": {
       "created": "2025-06-23T01:54:54.967Z",
-      "updated": "2025-06-23T02:19:13.681Z",
+      "updated": "2025-06-23T02:20:15.554Z",
       "description": "Tasks for master context"
     }
   }
