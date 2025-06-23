@@ -33,9 +33,15 @@ class HomeView(TemplateView):
         return context
 
 
-class UserLoginView(LoginView):
+class CustomLoginView(LoginView):
     template_name = "registration/login.html"
     redirect_authenticated_user = True
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            return reverse_lazy("admin:index")
+        return reverse_lazy("home")
 
 
 def register(request):
