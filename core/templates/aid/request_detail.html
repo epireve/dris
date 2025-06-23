@@ -1,0 +1,135 @@
+{% extends "core/home.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'aid_request_list' %}">Aid Requests</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Request Details</li>
+                </ol>
+            </nav>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header {% if aid_request.priority == 'URGENT' %}bg-danger text-white
+                                      {% elif aid_request.priority == 'HIGH' %}bg-warning
+                                      {% elif aid_request.priority == 'MEDIUM' %}bg-info text-white
+                                      {% else %}bg-success text-white{% endif %}">
+                    <h3 class="card-title mb-0">
+                        {{ aid_request.get_aid_type_display }}
+                        <span class="float-end">{{ aid_request.get_priority_display }} Priority</span>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Status</h5>
+                            <p>
+                                <span class="badge {% if aid_request.status == 'PENDING' %}bg-warning
+                                                  {% elif aid_request.status == 'APPROVED' %}bg-success
+                                                  {% elif aid_request.status == 'IN_PROGRESS' %}bg-info
+                                                  {% elif aid_request.status == 'FULFILLED' %}bg-primary
+                                                  {% else %}bg-danger{% endif %}">
+                                    {{ aid_request.get_status_display }}
+                                </span>
+                            </p>
+                        </div>
+                        {% if aid_request.quantity %}
+                            <div class="col-md-6">
+                                <h5>Quantity</h5>
+                                <p>{{ aid_request.quantity }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Description</h5>
+                        <p>{{ aid_request.description }}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Location Details</h5>
+                        <p>{{ aid_request.location_details }}</p>
+                    </div>
+
+                    {% if aid_request.disaster_report %}
+                        <div class="mb-4">
+                            <h5>Related Disaster Report</h5>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>{{ aid_request.disaster_report.get_disaster_type_display }}</h6>
+                                    <p>{{ aid_request.disaster_report.description|truncatewords:50 }}</p>
+                                    <a href="{% url 'disaster_report_detail' aid_request.disaster_report.pk %}" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        View Full Report
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Request Information</h5>
+                            <p>
+                                <strong>Requested by:</strong> {{ aid_request.requester.username }}<br>
+                                <strong>Date:</strong> {{ aid_request.timestamp|date:"F j, Y, P" }}<br>
+                                <strong>Last Updated:</strong> {{ aid_request.last_updated|date:"F j, Y, P" }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if aid_request.assigned_to %}
+                                <h5>Assignment</h5>
+                                <p>
+                                    <strong>Assigned to:</strong> {{ aid_request.assigned_to.username }}<br>
+                                    {% if aid_request.notes %}
+                                        <strong>Notes:</strong><br>
+                                        {{ aid_request.notes }}
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if can_update %}
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5>Update Request Status</h5>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="status" class="form-label">New Status</label>
+                                        <select name="status" id="status" class="form-select">
+                                            {% for value, label in aid_request.STATUS_CHOICES %}
+                                                <option value="{{ value }}" {% if aid_request.status == value %}selected{% endif %}>
+                                                    {{ label }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">Add Notes</label>
+                                        <textarea name="notes" id="notes" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update Status</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

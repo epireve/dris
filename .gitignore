@@ -26,3 +26,4 @@ node_modules/
 .taskmaster/config.json
 .taskmaster/state.json
 .taskmaster/templates/example_prd.txt
+core/__pycache__/*

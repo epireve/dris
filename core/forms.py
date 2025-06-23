@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, DisasterReport
+from .models import User, DisasterReport, AidRequest
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -51,28 +51,91 @@ class DisasterReportForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Add Bootstrap classes to all fields
         for field in self.fields:
             if field not in ["latitude", "longitude", "description"]:
                 self.fields[field].widget.attrs.update({"class": "form-control"})
 
-        # Add help texts
         self.fields["disaster_type"].help_text = "Select the type of disaster"
         self.fields["severity"].help_text = "Rate the severity of the disaster"
         self.fields["latitude"].help_text = "GPS latitude coordinate (-90 to 90)"
         self.fields["longitude"].help_text = "GPS longitude coordinate (-180 to 180)"
 
+
+class AidRequestForm(forms.ModelForm):
+    disaster_report = forms.ModelChoiceField(
+        queryset=DisasterReport.objects.all(),
+        required=False,
+        empty_label="Select related disaster report (optional)",
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+
+    class Meta:
+        model = AidRequest
+        fields = [
+            "aid_type",
+            "description",
+            "quantity",
+            "priority",
+            "location_details",
+            "disaster_report",
+        ]
+        widgets = {
+            "description": forms.Textarea(
+                attrs={
+                    "rows": 4,
+                    "class": "form-control",
+                    "placeholder": "Describe what kind of aid you need...",
+                }
+            ),
+            "quantity": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "How many items/people need assistance?",
+                }
+            ),
+            "location_details": forms.Textarea(
+                attrs={
+                    "rows": 3,
+                    "class": "form-control",
+                    "placeholder": "Provide specific location details for aid delivery...",
+                }
+            ),
+            "aid_type": forms.Select(attrs={"class": "form-control"}),
+            "priority": forms.Select(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if user:
+            # If user is provided, filter disaster reports to show only user's reports
+            self.fields["disaster_report"].queryset = DisasterReport.objects.filter(
+                reporter=user
+            )
+
+        # Add help texts
+        self.fields["aid_type"].help_text = "Select the type of aid needed"
+        self.fields["quantity"].help_text = (
+            "Enter the number of items/people (optional)"
+        )
+        self.fields["priority"].help_text = "How urgent is this request?"
+        self.fields["disaster_report"].help_text = (
+            "Link this request to a disaster report"
+        )
+
     def clean(self):
         cleaned_data = super().clean()
-        lat = cleaned_data.get("latitude")
-        lon = cleaned_data.get("longitude")
+        aid_type = cleaned_data.get("aid_type")
+        description = cleaned_data.get("description")
+        location_details = cleaned_data.get("location_details")
 
-        if lat is not None and (lat < -90 or lat > 90):
-            self.add_error("latitude", "Latitude must be between -90 and 90 degrees")
-
-        if lon is not None and (lon < -180 or lon > 180):
+        if not description:
             self.add_error(
-                "longitude", "Longitude must be between -180 and 180 degrees"
+                "description", "Please provide a description of the aid needed"
+            )
+
+        if not location_details:
+            self.add_error(
+                "location_details", "Please provide location details for aid delivery"
             )
 
         return cleaned_data

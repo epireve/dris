@@ -1,24 +1,23 @@
-from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import redirect
+from django.contrib import messages
 from functools import wraps
 
 
-def role_required(allowed_roles):
-    """
-    Decorator for views that checks that the user has the required role.
-    """
-
+def role_required(role):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             if not request.user.is_authenticated:
+                messages.error(request, "Please login to access this page.")
                 return redirect("login")
-            if request.user.role not in (
-                allowed_roles
-                if isinstance(allowed_roles, (list, tuple))
-                else [allowed_roles]
-            ):
+
+            if request.user.role != role:
+                messages.error(
+                    request,
+                    f"Access denied. This page is only accessible to {role.lower()} users.",
+                )
                 return redirect("home")
+
             return view_func(request, *args, **kwargs)
 
         return _wrapped_view
@@ -26,6 +25,13 @@ def role_required(allowed_roles):
     return decorator
 
 
-citizen_required = role_required("CITIZEN")
-volunteer_required = role_required("VOLUNTEER")
-authority_required = role_required("AUTHORITY")
+def citizen_required(view_func):
+    return role_required("CITIZEN")(view_func)
+
+
+def volunteer_required(view_func):
+    return role_required("VOLUNTEER")(view_func)
+
+
+def authority_required(view_func):
+    return role_required("AUTHORITY")(view_func)

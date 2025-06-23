@@ -1,0 +1,64 @@
+{% extends "core/home.html" %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <div class="row mt-4">
+        {% if user.role == 'CITIZEN' %}
+            {% if disaster_reports %}
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">My Recent Reports</h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for report in disaster_reports %}
+                                <a href="{% url 'disaster_report_detail' report.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ report.get_disaster_type_display }}</h6>
+                                        <small>{{ report.timestamp|date:"F j, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ report.description|truncatewords:20 }}</p>
+                                    <small>Status: {{ report.get_status_display }}</small>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if aid_requests %}
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">My Aid Requests</h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for request in aid_requests %}
+                                <a href="{% url 'aid_request_detail' request.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ request.get_aid_type_display }}</h6>
+                                        <small>{{ request.timestamp|date:"F j, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ request.description|truncatewords:20 }}</p>
+                                    <small>Status: {{ request.get_status_display }}</small>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% else %}
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8 text-center">
+            <h2>Welcome to DRIS</h2>
+            <p class="lead">Disaster Response Information System</p>
+            <div class="mt-4">
+                <a href="{% url 'login' %}" class="btn btn-primary me-2">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

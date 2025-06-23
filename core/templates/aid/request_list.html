@@ -1,0 +1,85 @@
+{% extends "core/home.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Aid Requests</h2>
+        {% if user.role == 'CITIZEN' %}
+            <a href="{% url 'submit_aid_request' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Submit New Request
+            </a>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if requests %}
+        <div class="row">
+            {% for request in requests %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header {% if request.priority == 'URGENT' %}bg-danger text-white
+                                              {% elif request.priority == 'HIGH' %}bg-warning
+                                              {% elif request.priority == 'MEDIUM' %}bg-info text-white
+                                              {% else %}bg-success text-white{% endif %}">
+                            {{ request.get_aid_type_display }}
+                            <span class="float-end">{{ request.get_priority_display }} Priority</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Status: {{ request.get_status_display }}</h5>
+                            <p class="card-text">{{ request.description|truncatewords:30 }}</p>
+                            
+                            {% if request.quantity %}
+                                <p class="mb-2"><strong>Quantity:</strong> {{ request.quantity }}</p>
+                            {% endif %}
+                            
+                            {% if request.disaster_report %}
+                                <p class="mb-2">
+                                    <strong>Related Disaster:</strong> 
+                                    {{ request.disaster_report.get_disaster_type_display }}
+                                </p>
+                            {% endif %}
+
+                            <div class="card-text small text-muted mb-2">
+                                <div>Location: {{ request.location_details|truncatewords:10 }}</div>
+                                <div>Requested by: {{ request.requester.username }}</div>
+                                <div>Date: {{ request.timestamp|date:"F j, Y, P" }}</div>
+                            </div>
+
+                            {% if user.role == 'VOLUNTEER' or user.role == 'AUTHORITY' %}
+                                {% if request.assigned_to %}
+                                    <p class="mb-2 text-info">
+                                        <strong>Assigned to:</strong> {{ request.assigned_to.username }}
+                                    </p>
+                                {% else %}
+                                    <p class="mb-2 text-warning">
+                                        <strong>Not yet assigned</strong>
+                                    </p>
+                                {% endif %}
+                            {% endif %}
+
+                            <a href="{% url 'aid_request_detail' request.pk %}" class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No aid requests found.
+            {% if user.role == 'CITIZEN' %}
+                <a href="{% url 'submit_aid_request' %}" class="alert-link">Submit a new request?</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

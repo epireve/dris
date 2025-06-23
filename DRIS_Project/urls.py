@@ -17,4 +17,10 @@ urlpatterns = [
     path(
         "report/<int:pk>/", views.disaster_report_detail, name="disaster_report_detail"
     ),
+    # Aid Request URLs
+    path(
+        "aid/submit/", views.SubmitAidRequestView.as_view(), name="submit_aid_request"
+    ),
+    path("aid/requests/", views.AidRequestListView.as_view(), name="aid_request_list"),
+    path("aid/request/<int:pk>/", views.aid_request_detail, name="aid_request_detail"),
 ]
