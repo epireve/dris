@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
 from django.views.generic import TemplateView, ListView, CreateView
 from django.utils.decorators import method_decorator
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import Count
@@ -332,4 +333,36 @@ def shelter_edit(request, pk):
         request,
         "shelter/shelter_form.html",
         {"form": form, "is_edit": True, "shelter": shelter},
+    )
+
+
+def shelter_directory(request):
+    # Filtering logic
+    location_query = request.GET.get("location", "")
+    only_available = request.GET.get("available", "") == "on"
+
+    shelters = Shelter.objects.filter(is_active=True)
+    if location_query:
+        shelters = shelters.filter(location__icontains=location_query)
+    if only_available:
+        shelters = shelters.filter(availability__gt=0)
+    shelters = shelters.order_by("location", "name")
+
+    # For dropdown: unique locations
+    unique_locations = (
+        Shelter.objects.filter(is_active=True)
+        .values_list("location", flat=True)
+        .distinct()
+        .order_by("location")
+    )
+
+    return render(
+        request,
+        "shelter/directory.html",
+        {
+            "shelters": shelters,
+            "location_query": location_query,
+            "only_available": only_available,
+            "unique_locations": unique_locations,
+        },
     )

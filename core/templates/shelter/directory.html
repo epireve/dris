@@ -5,6 +5,32 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="mb-4 text-center">Public Shelter Directory</h2>
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-5 col-lg-4">
+            <input type="text" name="location" class="form-control" placeholder="Search by location..." value="{{ location_query }}">
+        </div>
+        <div class="col-md-4 col-lg-3">
+            <select name="location" class="form-select">
+                <option value="">All Locations</option>
+                {% for loc in unique_locations %}
+                    <option value="{{ loc }}" {% if location_query == loc %}selected{% endif %}>{{ loc }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 col-lg-3 d-flex align-items-center">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="available" id="available" {% if only_available %}checked{% endif %}>
+                <label class="form-check-label" for="available">
+                    Only show available
+                </label>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-funnel"></i> Filter
+            </button>
+        </div>
+    </form>
     {% if user.is_authenticated %}
         {% if user.role == "AUTHORITY" or user.is_superuser or user.is_staff %}
             <div class="mb-3 text-end">
