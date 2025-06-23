@@ -1,7 +1,7 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView, ListView, CreateView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
@@ -12,7 +12,7 @@ from .forms import (
     AidRequestForm,
     VolunteerRegistrationForm,
 )
-from .models import DisasterReport, AidRequest, VolunteerProfile, User
+from .models import DisasterReport, AidRequest, VolunteerProfile, User, TaskAssignment
 from .decorators import citizen_required, volunteer_required, authority_required
 
 
@@ -150,25 +150,45 @@ class AidRequestListView(ListView):
 @login_required
 def aid_request_detail(request, pk):
     aid_request = get_object_or_404(AidRequest, pk=pk)
-    if request.user.role == "CITIZEN" and aid_request.requester != request.user:
-        messages.error(request, "You do not have permission to view this aid request.")
-        return redirect("aid_request_list")
-    if request.method == "POST" and request.user.role in ["VOLUNTEER", "AUTHORITY"]:
-        new_status = request.POST.get("status")
-        notes = request.POST.get("notes")
-        if new_status and new_status in dict(AidRequest.STATUS_CHOICES):
-            aid_request.status = new_status
-            if notes:
-                aid_request.notes = (
-                    aid_request.notes + "\n\n" if aid_request.notes else ""
-                ) + notes
-            aid_request.assigned_to = request.user
-            aid_request.save()
-            messages.success(request, "Aid request status updated successfully.")
+    assignments = TaskAssignment.objects.filter(aid_request=aid_request).select_related(
+        "volunteer", "authority"
+    )
+    can_assign = request.user.is_authenticated and (
+        request.user.role == "AUTHORITY"
+        or request.user.is_superuser
+        or request.user.is_staff
+    )
+    volunteers = User.objects.filter(role="VOLUNTEER", is_active=True)
+    assignment_error = None
+
+    # Assignment form handling
+    if can_assign and request.method == "POST" and "assign_volunteer" in request.POST:
+        volunteer_id = request.POST.get("volunteer_id")
+        notes = request.POST.get("assignment_notes", "")
+        try:
+            volunteer = User.objects.get(pk=volunteer_id, role="VOLUNTEER")
+            TaskAssignment.objects.create(
+                authority=request.user,
+                volunteer=volunteer,
+                aid_request=aid_request,
+                notes=notes,
+                status="ASSIGNED",
+            )
+            messages.success(
+                request, f"Volunteer {volunteer.username} assigned successfully."
+            )
             return redirect("aid_request_detail", pk=pk)
+        except Exception as e:
+            assignment_error = str(e)
+            messages.error(request, f"Assignment failed: {assignment_error}")
+
     context = {
         "aid_request": aid_request,
         "can_update": request.user.role in ["VOLUNTEER", "AUTHORITY"],
+        "assignments": assignments,
+        "can_assign": can_assign,
+        "volunteers": volunteers,
+        "assignment_error": assignment_error,
     }
     return render(request, "aid/request_detail.html", context)
 

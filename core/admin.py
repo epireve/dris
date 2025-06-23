@@ -2,7 +2,14 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from .models import User, DisasterReport, AidRequest, Shelter, VolunteerProfile
+from .models import (
+    User,
+    DisasterReport,
+    AidRequest,
+    Shelter,
+    VolunteerProfile,
+    TaskAssignment,
+)
 
 
 class CustomUserAdmin(UserAdmin):
@@ -102,6 +109,27 @@ class VolunteerProfileAdmin(admin.ModelAdmin):
                 obj.verified_by = None
                 obj.verification_date = None
         super().save_model(request, obj, form, change)
+
+
+@admin.register(TaskAssignment)
+class TaskAssignmentAdmin(admin.ModelAdmin):
+    list_display = (
+        "aid_request",
+        "volunteer",
+        "authority",
+        "status",
+        "assigned_at",
+        "updated_at",
+    )
+    list_filter = ("status", "assigned_at", "updated_at")
+    search_fields = (
+        "aid_request__description",
+        "volunteer__username",
+        "authority__username",
+        "notes",
+    )
+    raw_id_fields = ("aid_request", "volunteer", "authority")
+    readonly_fields = ("assigned_at", "updated_at")
 
 
 admin.site.register(User, CustomUserAdmin)
