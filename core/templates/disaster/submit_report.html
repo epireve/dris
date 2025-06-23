@@ -9,6 +9,7 @@
                     <h2 class="card-title mb-0">Submit Disaster Report</h2>
                 </div>
                 <div class="card-body">
+                    <div id="map" style="height: 350px; width: 100%; margin-bottom: 1.5rem;"></div>
                     <form method="post" class="needs-validation" novalidate>
                         {% csrf_token %}
                         {% for field in form %}
@@ -42,4 +43,53 @@
         </div>
     </div>
 </div>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div id="map" style="height: 350px; width: 100%; margin-bottom: 1.5rem;"></div>
+            </div>
+        </div>
+    </div>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Try to get initial values from form fields
+            var latInput = document.querySelector("input[name*='lat']");
+            var lngInput = document.querySelector("input[name*='long']");
+            var lat = latInput && latInput.value ? parseFloat(latInput.value) : 3.139;
+            var lng = lngInput && lngInput.value ? parseFloat(lngInput.value) : 101.6869;
+            var map = L.map('map').setView([lat, lng], 7);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            var marker = L.marker([lat, lng], {draggable: true}).addTo(map);
+
+            // Update form fields on marker drag
+            marker.on('dragend', function(e) {
+                var pos = marker.getLatLng();
+                if (latInput) latInput.value = pos.lat.toFixed(6);
+                if (lngInput) lngInput.value = pos.lng.toFixed(6);
+            });
+
+            // Add geocoder (search box)
+            var geocoder = L.Control.geocoder({
+                defaultMarkGeocode: false
+            })
+            .on('markgeocode', function(e) {
+                var bbox = e.geocode.bbox;
+                var center = e.geocode.center;
+                map.fitBounds(bbox);
+                marker.setLatLng(center);
+                if (latInput) latInput.value = center.lat.toFixed(6);
+                if (lngInput) lngInput.value = center.lng.toFixed(6);
+            })
+            .addTo(map);
+        });
+    </script>
 {% endblock %}
