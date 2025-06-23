@@ -1,6 +1,7 @@
 {% comment %}
 Show admin/authority menu for users with is_superuser or is_staff, even if role is not set.
 {% endcomment %}
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -68,17 +69,24 @@ Show admin/authority menu for users with is_superuser or is_staff, even if role 
 
     <div class="p-0 main-content container-fluid">
         {% if user.is_authenticated and request.resolver_match.url_name == 'home' %}
-            <div class="text-center hero">
-                <h1 class="display-4">Welcome to DRIS</h1>
-                <p class="lead">
-                    {% if user.is_superuser or user.is_staff or user.role == 'AUTHORITY' %}
-                        Monitor and manage disaster situations
-                    {% elif user.role == 'CITIZEN' %}
-                        Report disasters and request assistance
-                    {% elif user.role == 'VOLUNTEER' %}
-                        Respond to aid requests and help citizens in need
-                    {% endif %}
-                </p>
+            <div class="hero">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-2 text-center">
+                        <img src="{% static 'admin/img/nadma-logo.png' %}" alt="NADMA Logo" style="max-width: 100%; max-height: 110px;">
+                    </div>
+                    <div class="col-8 text-start">
+                        <h1 class="display-4">Welcome to DRIS</h1>
+                        <p class="lead">
+                            {% if user.is_superuser or user.is_staff or user.role == 'AUTHORITY' %}
+                                Monitor and manage disaster situations
+                            {% elif user.role == 'CITIZEN' %}
+                                Report disasters and request assistance
+                            {% elif user.role == 'VOLUNTEER' %}
+                                Respond to aid requests and help citizens in need
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
             </div>
             <!-- Quick Actions Section -->
             <div class="container">
