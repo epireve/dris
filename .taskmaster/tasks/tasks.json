@@ -93,7 +93,7 @@
             "description": "Create an Entity-Relationship Diagram to visually map out entities, their attributes, and relationships based on the requirements.",
             "dependencies": [],
             "details": "Use diagramming tools (e.g., draw.io, Lucidchart) to create an ERD. Clearly define primary keys, foreign keys, and cardinality for each relationship. Ensure all entities (User, DisasterReport, AidRequest, Volunteer, Shelter) and their connections are represented. Review for normalization and avoid redundancy.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Cross-check the ERD with the requirements list to ensure completeness and accuracy."
           },
           {
@@ -671,7 +671,7 @@
     ],
     "metadata": {
       "created": "2025-06-23T01:54:54.967Z",
-      "updated": "2025-06-23T02:09:03.345Z",
+      "updated": "2025-06-23T02:10:06.457Z",
       "description": "Tasks for master context"
     }
   }
