@@ -7,6 +7,8 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import Count
+from .forms import ShelterForm
+from .models import Shelter
 from .forms import (
     UserRegistrationForm,
     DisasterReportForm,
@@ -288,3 +290,46 @@ def authority_analytics(request):
 def shelter_directory(request):
     shelters = Shelter.objects.filter(is_active=True).order_by("location", "name")
     return render(request, "shelter/directory.html", {"shelters": shelters})
+
+
+@login_required
+def shelter_add(request):
+    if not (
+        request.user.role == "AUTHORITY"
+        or request.user.is_superuser
+        or request.user.is_staff
+    ):
+        return redirect("login")
+    if request.method == "POST":
+        form = ShelterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("shelter_directory")
+    else:
+        form = ShelterForm()
+    return render(
+        request, "shelter/shelter_form.html", {"form": form, "is_edit": False}
+    )
+
+
+@login_required
+def shelter_edit(request, pk):
+    if not (
+        request.user.role == "AUTHORITY"
+        or request.user.is_superuser
+        or request.user.is_staff
+    ):
+        return redirect("login")
+    shelter = get_object_or_404(Shelter, pk=pk)
+    if request.method == "POST":
+        form = ShelterForm(request.POST, instance=shelter)
+        if form.is_valid():
+            form.save()
+            return redirect("shelter_directory")
+    else:
+        form = ShelterForm(instance=shelter)
+    return render(
+        request,
+        "shelter/shelter_form.html",
+        {"form": form, "is_edit": True, "shelter": shelter},
+    )

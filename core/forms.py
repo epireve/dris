@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User, DisasterReport, AidRequest, VolunteerProfile
+from .models import Shelter
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -176,3 +177,24 @@ class VolunteerRegistrationForm(forms.ModelForm):
         data = self.cleaned_data["preferred_locations"]
         # Convert comma-separated string to list
         return [loc.strip() for loc in data.split(",") if loc.strip()]
+
+
+class ShelterForm(forms.ModelForm):
+    class Meta:
+        model = Shelter
+        fields = [
+            "name",
+            "location",
+            "capacity",
+            "availability",
+            "contact_info",
+            "is_active",
+        ]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "location": forms.TextInput(attrs={"class": "form-control"}),
+            "capacity": forms.NumberInput(attrs={"class": "form-control"}),
+            "availability": forms.NumberInput(attrs={"class": "form-control"}),
+            "contact_info": forms.TextInput(attrs={"class": "form-control"}),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }

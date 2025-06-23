@@ -5,13 +5,29 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="mb-4 text-center">Public Shelter Directory</h2>
+    {% if user.is_authenticated %}
+        {% if user.role == "AUTHORITY" or user.is_superuser or user.is_staff %}
+            <div class="mb-3 text-end">
+                <a href="{% url 'shelter_add' %}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Add Shelter
+                </a>
+            </div>
+        {% endif %}
+    {% endif %}
     <div class="row">
         {% if shelters %}
             {% for shelter in shelters %}
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">{{ shelter.name }}</h5>
+                            {% if user.is_authenticated %}
+                                {% if user.role == "AUTHORITY" or user.is_superuser or user.is_staff %}
+                                    <a href="{% url 'shelter_edit' shelter.pk %}" class="btn btn-sm btn-outline-light ms-2" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
                         </div>
                         <div class="card-body">
                             <p><strong>Location:</strong> {{ shelter.location }}</p>

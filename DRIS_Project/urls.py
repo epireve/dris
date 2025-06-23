@@ -29,4 +29,6 @@ urlpatterns = [
     path("authority/analytics/", views.authority_analytics, name="authority_analytics"),
     # Public Shelter Directory
     path("shelters/", views.shelter_directory, name="shelter_directory"),
+    path("shelters/add/", views.shelter_add, name="shelter_add"),
+    path("shelters/<int:pk>/edit/", views.shelter_edit, name="shelter_edit"),
 ]
