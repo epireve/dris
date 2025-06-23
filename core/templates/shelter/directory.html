@@ -5,12 +5,14 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="mb-4 text-center">Public Shelter Directory</h2>
-    <form method="get" class="row g-3 mb-4">
+    <form method="get" class="row g-3 mb-4" aria-label="Shelter Filter">
         <div class="col-md-5 col-lg-4">
-            <input type="text" name="location" class="form-control" placeholder="Search by location..." value="{{ location_query }}">
+            <label for="location-search" class="visually-hidden">Search by location</label>
+            <input type="text" name="location" id="location-search" class="form-control" placeholder="Search by location..." value="{{ location_query }}">
         </div>
         <div class="col-md-4 col-lg-3">
-            <select name="location" class="form-select">
+            <label for="location-dropdown" class="visually-hidden">Select location</label>
+            <select name="location" id="location-dropdown" class="form-select" aria-label="Select location">
                 <option value="">All Locations</option>
                 {% for loc in unique_locations %}
                     <option value="{{ loc }}" {% if location_query == loc %}selected{% endif %}>{{ loc }}</option>
@@ -26,7 +28,7 @@
             </div>
         </div>
         <div class="col-md-12 col-lg-2">
-            <button type="submit" class="btn btn-primary w-100">
+            <button type="submit" class="btn btn-primary w-100" aria-label="Filter shelters">
                 <i class="bi bi-funnel"></i> Filter
             </button>
         </div>
@@ -60,9 +62,9 @@
                             <p><strong>Capacity:</strong> {{ shelter.capacity }}</p>
                             <p><strong>Availability:</strong>
                                 {% if shelter.availability > 0 %}
-                                    <span class="badge bg-success">{{ shelter.availability }}</span>
+                                    <span class="badge bg-success" aria-label="Available spots">{{ shelter.availability }}</span>
                                 {% else %}
-                                    <span class="badge bg-danger">Full</span>
+                                    <span class="badge bg-danger" aria-label="Full">Full</span>
                                 {% endif %}
                             </p>
                             {% if shelter.contact_info %}
@@ -71,9 +73,9 @@
                         </div>
                         <div class="card-footer text-end">
                             {% if shelter.is_active %}
-                                <span class="badge bg-info">Active</span>
+                                <span class="badge bg-info" aria-label="Active">Active</span>
                             {% else %}
-                                <span class="badge bg-secondary">Inactive</span>
+                                <span class="badge bg-secondary" aria-label="Inactive">Inactive</span>
                             {% endif %}
                         </div>
                     </div>
@@ -81,7 +83,7 @@
             {% endfor %}
         {% else %}
             <div class="col-12">
-                <div class="alert alert-warning text-center">
+                <div class="alert alert-warning text-center" role="alert">
                     No shelters found.
                 </div>
             </div>
