@@ -9,7 +9,7 @@
         "testStrategy": "Verify project creation by running the Django development server and accessing the default welcome page. Check repository structure and dependency installation.",
         "priority": "high",
         "dependencies": [],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -17,7 +17,7 @@
             "description": "Set up a new Git repository for the DRIS project and add a README.md file with basic project information.",
             "dependencies": [],
             "details": "Create a new directory for the project. Run 'git init' to initialize version control. Add a README.md file describing the project purpose, setup instructions, and any relevant metadata. Make the initial commit to establish the repository baseline.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify that 'git status' shows a clean working directory and that README.md is tracked in the repository."
           },
           {
@@ -28,7 +28,7 @@
               1
             ],
             "details": "Use 'python -m venv venv' (or preferred tool) to create a virtual environment inside the project directory. Activate the environment according to the OS (e.g., 'source venv/bin/activate' for Unix or 'venv\\Scripts\\activate' for Windows).",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Check that the Python interpreter points to the virtual environment and that 'which python' or 'where python' reflects the correct path."
           },
           {
@@ -39,7 +39,7 @@
               2
             ],
             "details": "Run 'pip install django' and any other required packages (e.g., 'pip install django-admin'). For Bootstrap, either install via npm/yarn if using a frontend build process, or plan to include Bootstrap via CDN in templates. Add installed packages to requirements.txt using 'pip freeze > requirements.txt'.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run 'python -m django --version' to confirm Django is installed. Check that requirements.txt lists all dependencies."
           },
           {
@@ -50,7 +50,7 @@
               3
             ],
             "details": "Run 'django-admin startproject DRIS_Project .' to create the project in the current directory. Follow best practices by organizing the project root, separating apps, static, and media directories as needed. Consider creating an 'apps' directory for modular app development, as recommended for scalable Django projects[2][4].",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify that manage.py and the DRIS_Project directory are present. Ensure the structure matches Django conventions and any additional folders (e.g., apps, static, media) are created."
           },
           {
@@ -61,7 +61,7 @@
               4
             ],
             "details": "Open DRIS_Project/settings.py and configure INSTALLED_APPS, STATIC_URL, and other basic settings. Set up urls.py with a root URL pattern. If using Bootstrap via CDN, prepare a base template that includes the Bootstrap stylesheet link. Commit all changes to the repository.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run 'python manage.py runserver' to ensure the project starts without errors. Access the root URL to confirm the configuration is functional."
           }
         ]
@@ -76,7 +76,7 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -84,7 +84,7 @@
             "description": "Review the Product Requirements Document (PRD) to extract all necessary data entities, attributes, and relationships required for the data model.",
             "dependencies": [],
             "details": "Carefully read through the PRD and any related documentation. List out all entities (User, DisasterReport, AidRequest, Volunteer, Shelter) and their required fields. Identify business rules, constraints, and relationships between entities. Document findings as a reference for the next steps.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify that all entities and attributes mentioned in the PRD are captured in the requirements list."
           },
           {
@@ -671,7 +671,7 @@
     ],
     "metadata": {
       "created": "2025-06-23T01:54:54.967Z",
-      "updated": "2025-06-23T01:54:54.967Z",
+      "updated": "2025-06-23T02:09:03.345Z",
       "description": "Tasks for master context"
     }
   }
