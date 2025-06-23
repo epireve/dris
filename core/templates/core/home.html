@@ -56,6 +56,9 @@ Show admin/authority menu for users with is_superuser or is_staff, even if role 
                             <a class="nav-link" href="{% url 'aid_request_list' %}">
                                 <i class="bi bi-gear"></i> Manage Aid
                             </a>
+                            <a class="nav-link" href="{% url 'authority_analytics' %}">
+                                <i class="bi bi-bar-chart"></i> Analytics
+                            </a>
                         {% elif user.role == 'CITIZEN' %}
                             <a class="nav-link" href="{% url 'submit_report' %}">
                                 <i class="bi bi-exclamation-triangle"></i> Report
@@ -164,6 +167,16 @@ Show admin/authority menu for users with is_superuser or is_staff, even if role 
                                     <h5 class="card-title mt-3">Aid Requests</h5>
                                     <p class="card-text">Coordinate aid distribution and assignments</p>
                                     <a href="{% url 'aid_request_list' %}" class="btn btn-primary">Manage Aid</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="card action-card h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-bar-chart text-info" style="font-size: 2rem;"></i>
+                                    <h5 class="card-title mt-3">Analytics</h5>
+                                    <p class="card-text">View analytics and statistics for your authority</p>
+                                    <a href="{% url 'authority_analytics' %}" class="btn btn-info">View Analytics</a>
                                 </div>
                             </div>
                         </div>

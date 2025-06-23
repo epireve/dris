@@ -6,6 +6,7 @@ from django.views.generic import TemplateView, ListView, CreateView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.db.models import Count
 from .forms import (
     UserRegistrationForm,
     DisasterReportForm,
@@ -221,3 +222,63 @@ def volunteer_register(request):
     return render(
         request, "volunteer/register.html", {"form": form, "is_update": is_update}
     )
+
+
+@login_required
+def authority_analytics(request):
+    if not (
+        request.user.role == "AUTHORITY"
+        or request.user.is_superuser
+        or request.user.is_staff
+    ):
+        messages.error(request, "You do not have permission to view analytics.")
+        return redirect("home")
+
+    # Disaster report stats
+    disaster_stats = DisasterReport.objects.values("disaster_type").annotate(
+        total=Count("id")
+    )
+    disaster_status_stats = DisasterReport.objects.values("status").annotate(
+        total=Count("id")
+    )
+    disaster_severity_stats = DisasterReport.objects.values("severity").annotate(
+        total=Count("id")
+    )
+
+    # Aid request stats
+    aid_type_stats = AidRequest.objects.values("aid_type").annotate(total=Count("id"))
+    aid_status_stats = AidRequest.objects.values("status").annotate(total=Count("id"))
+    aid_priority_stats = AidRequest.objects.values("priority").annotate(
+        total=Count("id")
+    )
+
+    # Assignment stats
+    assignment_status_stats = TaskAssignment.objects.values("status").annotate(
+        total=Count("id")
+    )
+    assignment_total = TaskAssignment.objects.count()
+
+    # Recent activity (last 30 days)
+    from django.utils import timezone
+    from datetime import timedelta
+
+    now = timezone.now()
+    last_30 = now - timedelta(days=30)
+    recent_reports = DisasterReport.objects.filter(timestamp__gte=last_30).count()
+    recent_aid = AidRequest.objects.filter(timestamp__gte=last_30).count()
+    recent_assignments = TaskAssignment.objects.filter(assigned_at__gte=last_30).count()
+
+    context = {
+        "disaster_stats": disaster_stats,
+        "disaster_status_stats": disaster_status_stats,
+        "disaster_severity_stats": disaster_severity_stats,
+        "aid_type_stats": aid_type_stats,
+        "aid_status_stats": aid_status_stats,
+        "aid_priority_stats": aid_priority_stats,
+        "assignment_status_stats": assignment_status_stats,
+        "assignment_total": assignment_total,
+        "recent_reports": recent_reports,
+        "recent_aid": recent_aid,
+        "recent_assignments": recent_assignments,
+    }
+    return render(request, "authority/analytics.html", context)

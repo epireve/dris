@@ -25,4 +25,6 @@ urlpatterns = [
     path("aid/request/<int:pk>/", views.aid_request_detail, name="aid_request_detail"),
     # Volunteer Registration
     path("volunteer/register/", views.volunteer_register, name="volunteer_register"),
+    # Authority Analytics
+    path("authority/analytics/", views.authority_analytics, name="authority_analytics"),
 ]
