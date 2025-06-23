@@ -71,9 +71,10 @@
             transform: translateY(-5px);
         }
         
-        /* Responsive navbar adjustments */
+        /* Hero section styling for full width and visual appeal */
         @media (max-width: 1200px) {
             .nav-link {
+                /* Responsive navbar adjustments */
                 padding: 0.5rem 0.75rem !important;
                 font-size: 0.9rem;
             }
@@ -173,21 +174,23 @@
         </div>
     </nav>
 
+    {% if user.is_authenticated and request.resolver_match.url_name == 'home' %}
+        <div class="hero text-center">
+            <h1 class="display-4">Welcome to DRIS</h1>
+            <p class="lead">
+                {% if user.role == 'CITIZEN' %}
+                    Report disasters and request assistance
+                {% elif user.role == 'VOLUNTEER' %}
+                    Respond to aid requests and help citizens in need
+                {% else %}
+                    Monitor and manage disaster situations
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
+
     <div class="container">
         {% if user.is_authenticated and request.resolver_match.url_name == 'home' %}
-            <div class="hero text-center">
-                <h1 class="display-4">Welcome to DRIS</h1>
-                <p class="lead">
-                    {% if user.role == 'CITIZEN' %}
-                        Report disasters and request assistance
-                    {% elif user.role == 'VOLUNTEER' %}
-                        Respond to aid requests and help citizens in need
-                    {% else %}
-                        Monitor and manage disaster situations
-                    {% endif %}
-                </p>
-            </div>
-
             <!-- Quick Actions Section -->
             <div class="row mb-4">
                 <div class="col-12">
