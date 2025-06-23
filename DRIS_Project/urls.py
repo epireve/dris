@@ -9,8 +9,12 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("login/", views.UserLoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
-    # Role-protected URLs
-    path("report/submit/", views.submit_report, name="submit_report"),
-    path("volunteer/dashboard/", views.volunteer_dashboard, name="volunteer_dashboard"),
-    path("authority/reports/", views.manage_reports, name="manage_reports"),
+    # Disaster Report URLs
+    path(
+        "report/submit/", views.SubmitDisasterReportView.as_view(), name="submit_report"
+    ),
+    path("reports/", views.DisasterReportListView.as_view(), name="report_list"),
+    path(
+        "report/<int:pk>/", views.disaster_report_detail, name="disaster_report_detail"
+    ),
 ]

@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.utils.decorators import method_decorator
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, DisasterReportForm
+from .models import DisasterReport
 from .decorators import citizen_required, volunteer_required, authority_required
 
 
@@ -35,20 +36,39 @@ class HomeView(TemplateView):
         return context
 
 
-# Example protected views
-@citizen_required
-def submit_report(request):
-    # View only accessible to citizens
-    return render(request, "core/submit_report.html")
+@method_decorator(citizen_required, name="dispatch")
+class SubmitDisasterReportView(TemplateView):
+    template_name = "disaster/submit_report.html"
+
+    def get(self, request, *args, **kwargs):
+        form = DisasterReportForm()
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request, *args, **kwargs):
+        form = DisasterReportForm(request.POST)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.reporter = request.user
+            report.save()
+            return redirect("disaster_report_detail", pk=report.pk)
+        return render(request, self.template_name, {"form": form})
 
 
-@volunteer_required
-def volunteer_dashboard(request):
-    # View only accessible to volunteers
-    return render(request, "core/volunteer_dashboard.html")
+@method_decorator(login_required, name="dispatch")
+class DisasterReportListView(ListView):
+    model = DisasterReport
+    template_name = "disaster/report_list.html"
+    context_object_name = "reports"
+    ordering = ["-timestamp"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.role == "CITIZEN":
+            return queryset.filter(reporter=self.request.user)
+        return queryset
 
 
-@authority_required
-def manage_reports(request):
-    # View only accessible to authorities
-    return render(request, "core/manage_reports.html")
+@login_required
+def disaster_report_detail(request, pk):
+    report = DisasterReport.objects.get(pk=pk)
+    return render(request, "disaster/report_detail.html", {"report": report})

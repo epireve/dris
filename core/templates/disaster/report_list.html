@@ -1,0 +1,48 @@
+{% extends "core/home.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Disaster Reports</h2>
+    
+    {% if request.user.role == 'CITIZEN' %}
+    <div class="mb-4">
+        <a href="{% url 'submit_report' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Submit New Report
+        </a>
+    </div>
+    {% endif %}
+
+    {% if reports %}
+        <div class="row">
+            {% for report in reports %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header {% if report.severity == 'CRITICAL' %}bg-danger text-white
+                                              {% elif report.severity == 'HIGH' %}bg-warning
+                                              {% elif report.severity == 'MEDIUM' %}bg-info text-white
+                                              {% else %}bg-success text-white{% endif %}">
+                            {{ report.get_disaster_type_display }}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Severity: {{ report.get_severity_display }}</h5>
+                            <p class="card-text">{{ report.description|truncatewords:30 }}</p>
+                            <ul class="list-unstyled">
+                                <li><small class="text-muted">Status: {{ report.get_status_display }}</small></li>
+                                <li><small class="text-muted">Reported by: {{ report.reporter.username }}</small></li>
+                                <li><small class="text-muted">Date: {{ report.timestamp|date:"F j, Y, P" }}</small></li>
+                            </ul>
+                            <a href="{% url 'disaster_report_detail' report.pk %}" class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No disaster reports found.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

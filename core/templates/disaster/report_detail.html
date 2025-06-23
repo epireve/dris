@@ -1,0 +1,83 @@
+{% extends "core/home.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Report Details</li>
+                </ol>
+            </nav>
+
+            <div class="card">
+                <div class="card-header {% if report.severity == 'CRITICAL' %}bg-danger text-white
+                                      {% elif report.severity == 'HIGH' %}bg-warning
+                                      {% elif report.severity == 'MEDIUM' %}bg-info text-white
+                                      {% else %}bg-success text-white{% endif %}">
+                    <h3 class="card-title mb-0">{{ report.get_disaster_type_display }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Status</h5>
+                            <p class="badge {% if report.status == 'NEW' %}bg-primary
+                                          {% elif report.status == 'VERIFIED' %}bg-success
+                                          {% elif report.status == 'IN_PROGRESS' %}bg-warning
+                                          {% else %}bg-secondary{% endif %}">
+                                {{ report.get_status_display }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Severity</h5>
+                            <p class="badge {% if report.severity == 'CRITICAL' %}bg-danger
+                                          {% elif report.severity == 'HIGH' %}bg-warning
+                                          {% elif report.severity == 'MEDIUM' %}bg-info
+                                          {% else %}bg-success{% endif %}">
+                                {{ report.get_severity_display }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Description</h5>
+                        <p>{{ report.description }}</p>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Location</h5>
+                            <p>Latitude: {{ report.latitude }}<br>
+                               Longitude: {{ report.longitude }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Reported By</h5>
+                            <p>{{ report.reporter.username }}<br>
+                               {{ report.timestamp|date:"F j, Y, P" }}</p>
+                        </div>
+                    </div>
+
+                    {% if user.role == 'AUTHORITY' %}
+                    <div class="mb-3">
+                        <h5>Administrative Actions</h5>
+                        <form method="post">
+                            {% csrf_token %}
+                            <select name="status" class="form-select mb-2">
+                                {% for status in report.STATUS_CHOICES %}
+                                <option value="{{ status.0 }}" {% if report.status == status.0 %}selected{% endif %}>
+                                    {{ status.1 }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-primary">Update Status</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

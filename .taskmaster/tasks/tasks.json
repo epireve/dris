@@ -135,7 +135,7 @@
         "dependencies": [
           2
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -176,7 +176,7 @@
               3
             ],
             "details": "Create custom decorators or mixins to check user roles before granting access to specific views. Apply these checks to views that require role-based restrictions. Document which roles have access to which resources.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "Write tests to ensure users with different roles can only access permitted views and are denied access otherwise."
           },
           {
@@ -187,7 +187,7 @@
               4
             ],
             "details": "Test the full workflow for each role: registration, login, and access to protected resources. Fix any integration issues and ensure user experience is consistent and secure.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Automate end-to-end tests covering all user scenarios, including edge cases and security checks."
           }
         ]
@@ -202,7 +202,7 @@
         "dependencies": [
           3
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -210,7 +210,7 @@
             "description": "Create a Django model named DisasterReport to store disaster event details including type, GPS coordinates, severity, and timestamp.",
             "dependencies": [],
             "details": "Define the DisasterReport model in models.py with fields: disaster_type (CharField or ChoiceField), latitude (FloatField), longitude (FloatField), severity (IntegerField or ChoiceField), and timestamp (DateTimeField, auto_now_add=True). Run migrations to create the table in SQLite.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Use Django shell or admin to create and retrieve DisasterReport instances, verifying all fields are stored and retrieved correctly."
           },
           {
@@ -221,7 +221,7 @@
               1
             ],
             "details": "Implement a ModelForm for DisasterReport in forms.py, ensuring all fields are present and include validation for GPS coordinates and severity. Customize widgets for better user experience if needed.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Render the form in a test view and submit sample data, checking for validation errors and correct data binding."
           },
           {
@@ -232,7 +232,7 @@
               2
             ],
             "details": "Create a class-based or function-based view to handle GET (display form) and POST (process submission) requests. On successful submission, save the report to the database and provide user feedback. Design a user-friendly HTML template for the form.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "Manually test the view by submitting reports through the browser, verifying successful submissions and error handling."
           },
           {
@@ -671,7 +671,7 @@
     ],
     "metadata": {
       "created": "2025-06-23T01:54:54.967Z",
-      "updated": "2025-06-23T02:36:20.169Z",
+      "updated": "2025-06-23T02:48:32.600Z",
       "description": "Tasks for master context"
     }
   }
