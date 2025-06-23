@@ -34,7 +34,8 @@ Show admin/authority menu for users with is_superuser or is_staff, even if role 
         .navbar-profile { position: absolute; right: 1rem; top: 0.5rem; z-index: 1051; }
         @media (max-width: 991.98px) { .navbar-profile { position: fixed; right: 1rem; top: 0.5rem; z-index: 2000; } }
         .hero {
-            background-color: #3498db;
+            position: relative;
+            background: linear-gradient(rgba(52,152,219,0.7), rgba(52,152,219,0.5)), url("{% static 'admin/img/disaster-nadma.jpg' %}") center center/cover no-repeat;
             color: white;
             padding: 4rem 2rem;
             margin-bottom: 2rem;
