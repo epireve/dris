@@ -23,7 +23,9 @@ node_modules/
 
 # OS specific
 .DS_Store
-.taskmaster/config.json
-.taskmaster/state.json
-.taskmaster/templates/example_prd.txt
+
+# Taskmaster directory
+.taskmaster/
+
+# Python cache
 core/__pycache__/*
